@@ -1,0 +1,14 @@
+#lang scheme
+
+
+(define (fila n_fila piece)
+  (cons n_fila piece))
+
+(define board
+  (list  '() '() '() '() '() '() '()))
+
+(define (b0 tablero)
+  board)
+
+(define (board-can-play? tablero)
+  1)
