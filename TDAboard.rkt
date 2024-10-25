@@ -73,7 +73,10 @@
   (list  (empty-column) (empty-column) (empty-column) (empty-column) (empty-column) (empty-column) (empty-column))
   )
 
-(define (next-column tablero)
+(define (out-of-board? tablero)
+  (null? tablero))
+
+(define (next-columns tablero)
   (cdr tablero)
   )
 
@@ -81,10 +84,13 @@
   (car tablero)
   )
 
+(define (end-board? tablero)
+  (null? tablero))
+
 (define (get-n-column tablero num-column)
   (cond
     [(= num-column 1) (get-column tablero)]
-    [else (get-n-column (next-column tablero) (- num-column 1))])
+    [else (get-n-column (next-columns tablero) (- num-column 1))])
   )
 
 (define(insert-piece piece column)
@@ -103,14 +109,14 @@
       [(= num-column 8) #f]
       [(null? tablero) #t]
       [(not (column-full? (get-column tablero))) #t]
-      [else (board-can-play-aux? (next-column tablero) (+ 1 num-column))])
+      [else (board-can-play-aux? (next-columns tablero) (+ 1 num-column))])
     )(board-can-play-aux? tablero 1)
   )
 
 (define (update-column-board tablero n-column new-column)
   (cond
-    [(= n-column 1) (append-column new-column (next-column tablero))]
-    [else (append-column (get-column tablero) (update-column-board (next-column tablero) (- n-column 1) new-column))])
+    [(= n-column 1) (append-column new-column (next-columns tablero))]
+    [else (append-column (get-column tablero) (update-column-board (next-columns tablero) (- n-column 1) new-column))])
   )
 
 (define (board-set-piece tablero n-column piece)
@@ -134,9 +140,16 @@
     )
   )
 
+;(define (get-n-row board num-row)
+; (cond
+;    [(> num-row (count-pieces (get-column board))) null]
+;    [else (cons())]))
 
-
-(define (board-check-vertical-win tablero)
+(define (board-check-vertical-win tablero players)
+  (cond
+    [(end-board? tablero) 0]
+    [(= (column-check-vertical-win (get-column tablero) players) 0) (board-check-vertical-win (next-columns tablero) players)]
+    [else (column-check-vertical-win (get-column tablero) players)])
   )
 
 ;(define (board-check-horizontal-win tablero)
