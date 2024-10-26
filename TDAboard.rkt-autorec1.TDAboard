@@ -19,8 +19,7 @@
 ; Tipo recursión: No aplica.
 
 (define (empty-position? position)
-  (null? position)
-  )
+  (null? position))
 
 
 ; Descripción: Función que obtiene el número de fila de una posición (este número va de 1 a 6).
@@ -29,11 +28,7 @@
 ; Tipo recursión: No aplica.
 
 (define (get-num position)
-  (cond
-    [(empty-position? position) '()]
-    [else (car position)]
-    )
-  )
+  (car position))
 
 
 ; Descripción: Función que obtiene una ficha de una posición.
@@ -42,10 +37,7 @@
 ; Tipo recursión: No aplica.
 
 (define (get-piece position)
-  (cond
-    [(empty-position? position) '()]
-    [else (cdr position)])
-  )
+  (cdr position))
 
 
 ; Descripción: Función que genera un column vacía.
@@ -97,20 +89,12 @@
     )(count-pieces-aux column 0)
   )
 
-(define (get-n-position column num-position)
-  (cond
-    [(> num-position (count-pieces column)) '()]
-    [(empty-col? column) '()]
-    [(= (get-num (get-position column)) num-position) (get-position column)]
-    [else (get-n-position (next-positions column) num-position)])
-  )
-
 (define (get-n-piece column num-piece)
   (cond
     [(> num-piece (count-pieces column)) '()]
-    [(empty-col? column) '()]
     [(= (get-num (get-position column)) num-piece) (get-piece (get-position column))]
-    [else (get-n-piece (next-positions column) num-piece)]))
+    [else (get-n-piece (next-positions column) num-piece)])
+  )
 
 (define (column-full? column)
   (if (eq? (count-pieces column) 6) #t
@@ -265,26 +249,13 @@
 (define (row-board-check-horizontal-win row-board players)
  (cond
    [(end-row-board? row-board) 0]
-   [(= (row-check-horizontal-win (get-row row-board) players) 0) (row-board-check-horizontal-win (next-rows row-board) players)]
+   [(= (row-check-horizontal-win (get-row row-board) players) 0) (board-check-horizontal-win (next-rows row-board) players)]
    [else (row-check-horizontal-win (get-row row-board) players)]
    )
   )
 
-(define (count-pieces-diagonal-down tablero column position)
-  (define (count-pieces-diagonal-down-aux tablero column position piece count)
-    (cond  
-      [(= count  4) piece]
-      [(empty-col? column) 0]
-      [(empty-position? position) 0]
-      [(string=? piece (get-piece position)) (count-pieces-diagonal-down-aux (next-columns tablero) (get-column (next-columns tablero)) (get-n-position (get-column (next-columns tablero)) (- (get-num position) 1)) piece (+ 1 count))]
-      [else 0])
-    )
-  (cond
-       [(empty-position? position) 0]
-       [else (count-pieces-diagonal-down-aux tablero column position (get-piece position) 1)]
-       )
+(define (count-pieces-diagonal tablero column n-piece)
   )
-
 
 (define (board-check-horizontal-win board players)
   (row-board-check-horizontal-win (row-board board) players))
