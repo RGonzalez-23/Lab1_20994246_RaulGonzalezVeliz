@@ -1,0 +1,52 @@
+#lang scheme
+
+(provide get-num)
+(provide get-piece)
+(provide position)
+(provide empty-position?)
+
+
+
+
+; Descripción: Función que genera un TDA posición de conecta 4, que es un par de numero de fila y ficha.
+; Dom: num-fila (int) X ficha (piece).
+; Rec: posición (position). 
+; Tipo recursión: No aplica.
+
+(define (position n-position piece)
+  (cons n-position piece))
+
+
+; Descripción: Función que verifica si una posición esta vacía.
+; Dom: posición (position).
+; Rec: boolean (#t si la fila está vacía, #f si no). 
+; Tipo recursión: No aplica.
+
+(define (empty-position? position)
+  (null? position)
+  )
+
+
+; Descripción: Función que obtiene el número de fila de una posición (este número va de 1 a 6).
+; Dom: posición (position).
+; Rec: número de fila (int). 
+; Tipo recursión: No aplica.
+
+(define (get-num position)
+  (cond
+    [(empty-position? position) '()]
+    [else (car position)]
+    )
+  )
+
+
+; Descripción: Función que obtiene una ficha de una posición.
+; Dom: fila (position).
+; Rec: ficha (piece). 
+; Tipo recursión: No aplica.
+
+(define (get-piece position)
+  (cond
+    [(empty-position? position) '()]
+    [else (cdr position)])
+  )

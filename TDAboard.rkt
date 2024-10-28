@@ -1,140 +1,55 @@
 #lang scheme
 
 (require "TDAplayer.rkt")
+(require "TDAlist-players.rkt")
+(require "TDAposition.rkt")
+(require "TDAcolumn.rkt")
+(require "TDArow-board.rkt")
 
-
-
-; Descripción: Función que genera un TDA posición de conecta 4, que es un par de numero de fila y ficha.
-; Dom: num-fila (int) X ficha (piece).
-; Rec: posición (position). 
+; Descripción: Función que construye un tablero vacío de connect 4 a partir de 7 columnas vacías.
+; Dom: No recibe parámetros de entrada.
+; Rec: tablero (board).
 ; Tipo recursión: No aplica.
-
-(define (position n-position piece)
-  (cons n-position piece))
-
-
-; Descripción: Función que verifica si una posición esta vacía.
-; Dom: posición (position).
-; Rec: boolean (#t si la fila está vacía, #f si no). 
-; Tipo recursión: No aplica.
-
-(define (empty-position? position)
-  (null? position)
-  )
-
-
-; Descripción: Función que obtiene el número de fila de una posición (este número va de 1 a 6).
-; Dom: posición (position).
-; Rec: número de fila (int). 
-; Tipo recursión: No aplica.
-
-(define (get-num position)
-  (cond
-    [(empty-position? position) '()]
-    [else (car position)]
-    )
-  )
-
-
-; Descripción: Función que obtiene una ficha de una posición.
-; Dom: fila (position).
-; Rec: ficha (piece). 
-; Tipo recursión: No aplica.
-
-(define (get-piece position)
-  (cond
-    [(empty-position? position) '()]
-    [else (cdr position)])
-  )
-
-
-; Descripción: Función que genera un column vacía.
-; Dom: ninguno.
-; Rec: columna vacía (column). 
-; Tipo recursión: No aplica.
-
-(define (empty-column)
-  '())
-
-
-; Descripción: Función que verifica si una columna esta vacía.
-; Dom: columna (column).
-; Rec: boolean (#t si la columna está vacía, #f si no). 
-; Tipo recursión: No aplica.
-
-(define(empty-col? column)
-  (null? column))
-
-
-; Descripción: Función que obtiene la posición en una columna.
-; Dom: columns (column).
-; Rec: posición (position). 
-; Tipo recursión: No aplica.
-
-(define (get-position column)
-  (if (empty-col? column) "Error: no pieces in column"
-      (car column)
-      )
-  )
-
-
-; Descripción: Función que obtiene las siguientes posiciones de una columna.
-; Dom: columna (column).
-; Rec: columna (column).
-; Tipo recursión: No aplica.
-
-(define (next-positions column)
-  (cdr column))
-
-(define (next-position column)
-  (get-position (next-positions column)))
-
-(define (count-pieces column)
-  (define (count-pieces-aux column total)
-    (cond
-      [(empty-col? column) total]
-      [else (count-pieces-aux (next-positions column) (+ 1 total))])
-    )(count-pieces-aux column 0)
-  )
-
-(define (get-n-position column num-position)
-  (cond
-    [(> num-position (count-pieces column)) '()]
-    [(empty-col? column) '()]
-    [(= (get-num (get-position column)) num-position) (get-position column)]
-    [else (get-n-position (next-positions column) num-position)])
-  )
-
-(define (get-n-piece column num-piece)
-  (cond
-    [(> num-piece (count-pieces column)) '()]
-    [(empty-col? column) '()]
-    [(= (get-num (get-position column)) num-piece) (get-piece (get-position column))]
-    [else (get-n-piece (next-positions column) num-piece)]))
-
-(define (column-full? column)
-  (if (eq? (count-pieces column) 6) #t
-      #f
-  )
-)
 
 (define (board)
   (list  (empty-column) (empty-column) (empty-column) (empty-column) (empty-column) (empty-column) (empty-column))
   )
 
+
+; Descripción: Función que verifica si seguimos dentro del tablero de connect 4 al momento de recorrerlo.
+; Dom: tablero (board).
+; Rec: boolean (#t si estamos fuera del tablero, #f si no).
+; Tipo recursión: No aplica.
+
 (define (out-of-board? tablero)
-  (null? tablero))
+  (null? tablero)
+  )
+
+
+; Descripción: Función que obtiene las siguientes columnas de un tablero de connect 4.
+; Dom: tablero (board).
+; Rec: tablero (board).
+; Tipo recursión: No aplica.
 
 (define (next-columns tablero)
   (cdr tablero)
   )
 
+
+; Descripción: Función que obtiene la columna de un tablero de connect 4.
+; Dom: tablero (board).
+; Rec: columna (column).
+; Tipo recursión: No aplica.
+
 (define (get-column tablero)
   (car tablero)
   )
 
-(define (end-board? tablero)
-  (null? tablero))
+
+; Descripción: Función que obtiene una columna específica de un tablero dado un número.
+; Dom: tablero (board) X número de columna (int).
+; Rec: columna (column).
+; Tipo recursión: Natural.
 
 (define (get-n-column tablero num-column)
   (cond
@@ -142,15 +57,21 @@
     [else (get-n-column (next-columns tablero) (- num-column 1))])
   )
 
-(define(insert-piece piece column)
-  (cond
-    [(column-full? column) column]
-    [else (cons (position (+ (count-pieces column) 1) piece) column)])
-  )
+
+; Descripción: Función que une 2 columnas dadas para formar un tablero en una función recursiva.
+; Dom: columna (column) X columna (column).
+; Rec: tablero (board).
+; Tipo recursión: No aplica.
 
 (define (append-column col-1 col-2)
   (cons col-1 col-2)
   )
+
+
+; Descripción: Función que verifica si hay espacio dentro del tablero para jugar una ficha.
+; Dom: tablero (board).
+; Rec: boolean (#t si hay espacio en el tablero, #f si no).
+; Tipo recursión: De cola.
 
 (define (board-can-play? tablero)
   (define (board-can-play-aux? tablero num-column)
@@ -162,88 +83,47 @@
     )(board-can-play-aux? tablero 1)
   )
 
+
+; Descripción: Función actualiza una columna en específico del tablero dado el número de la
+; columna y la columna que reemplazará la columna indicada.
+; Dom: tablero (board) X número de columna (int) X columna actualizada (column).
+; Rec: tablero (board).
+; Tipo recursión: Natural.
+
 (define (update-column-board tablero n-column new-column)
   (cond
     [(= n-column 1) (append-column new-column (next-columns tablero))]
     [else (append-column (get-column tablero) (update-column-board (next-columns tablero) (- n-column 1) new-column))])
   )
 
+
+; Descripción: Función que inserta una pieza en una columna del tablero dado el número de columna.
+; Dom: tablero (board) X número de columna (int) X ficha (piece).
+; Rec: tablero (board).
+; Tipo recursión: No aplica.
+
 (define (board-set-piece tablero n-column piece)
   (update-column-board tablero n-column (insert-piece piece (get-n-column tablero n-column)))
   )
 
-(define (column-check-vertical-win column players)
-  (cond
-    [(< (count-pieces column) 4) 0]
-    [else (define (column-check-vertical-win-aux column count piece players)
-       (cond
-         [(= 4 count) (cond
-                        [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
-                        [else (get-id (get-next-player players))])]
-         [(empty-col? (next-positions column)) 0]
-         [(string=? (get-piece (next-position column)) piece) (column-check-vertical-win-aux (next-positions column) (+ 1 count) piece players)]
-         [else (column-check-vertical-win-aux (next-positions column) 1 (get-piece (next-position column)))])
-            )(column-check-vertical-win-aux column 1 (get-n-piece column (count-pieces column)) players)]
-    )
-  )
+
+; Descripción: Función que retorna una fila de un tablero dado un número de fila.
+; Dom: tablero (board) X número de fila (int).
+; Rec: fila de tablero (row).
+; Tipo recursión: Natural.
 
 (define (get-n-row tablero num-row)
  (cond
-    [(end-board? tablero) null]
+    [(out-of-board? tablero) null]
     [else (cons (get-n-piece (get-column tablero) num-row) (get-n-row (next-columns tablero) num-row))])
   )
 
-(define (get-ficha row)
-  (car row))
 
-(define (next-fichas row)
-  (cdr row))
-
-(define (empty-space? row)
-  (null? (get-ficha row))
-  )
-
-(define (end-row? row)
-  (null? row)
-  )
-
-(define (count-fichas row)
-  (define (count-fichas-aux row total)
-    (cond
-      [(end-row? row) total]
-      [(string? (get-ficha row)) (count-fichas-aux (next-fichas row) (+ 1 total))]
-      [else (count-fichas-aux (next-fichas row) total)])
-    )(count-fichas-aux row 0)
-  )
-
-(define (append-row row-1 row-2)
-  (cons row-1 row-2)
-  )
-
-(define (board-check-vertical-win tablero players)
-  (cond
-    [(end-board? tablero) 0]
-    [(= (column-check-vertical-win (get-column tablero) players) 0) (board-check-vertical-win (next-columns tablero) players)]
-    [else (column-check-vertical-win (get-column tablero) players)])
-  )
-
-(define (row-check-horizontal-win row players)
-  (cond
-    [(< (count-fichas row) 4) 0]
-    [else (define (row-check-horizonal-win-aux row players count piece)
-            (cond
-              [(= count 4) (cond
-                             [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
-                             [else (get-id (get-next-player players))])]
-              [(end-row? row) 0]
-              [(empty-space? row) (row-check-horizonal-win-aux (next-fichas row) players 0 piece)]
-              [(string=? piece (get-ficha row)) (row-check-horizonal-win-aux (next-fichas row) players (+ 1 count) piece)]
-              [else (row-check-horizonal-win-aux (next-fichas row) players 1 (get-ficha row))])
-            )(cond
-               [(string? (get-ficha row)) (row-check-horizonal-win-aux row players 1 (get-ficha row))]
-               [else (row-check-horizonal-win-aux (next-fichas row) players 1 "empty")])]
-    )
-  )
+; Descripción: Función que construye un TDA row-board
+; (donde los elementos dentro de la lista tablero son las filas en vez de las columnas).
+; Dom: tablero (board).
+; Rec: fila de tablero (row).
+; Tipo recursión: De cola.
 
 (define (row-board board)
   (define (row-board-aux board count)
@@ -253,54 +133,89 @@
     )(row-board-aux board 1)
   )
 
-(define (get-row row-board)
-  (car row-board))
 
-(define (next-rows row-board)
-  (cdr row-board))
+; Descripción: Función que verifica si alguien ha ganado de forma vertical.
+; Dom: tablero (board) X lista de jugadores (list-players).
+; Rec: int (ID del ganador, 0 si es que no hay ganador).
+; Tipo recursión: Natural.
 
-(define (end-row-board? row-board)
-  (null? row-board))
-
-(define (row-board-check-horizontal-win row-board players)
- (cond
-   [(end-row-board? row-board) 0]
-   [(= (row-check-horizontal-win (get-row row-board) players) 0) (row-board-check-horizontal-win (next-rows row-board) players)]
-   [else (row-check-horizontal-win (get-row row-board) players)]
-   )
-  )
-
-(define (count-pieces-diagonal-down tablero column position)
-  (define (count-pieces-diagonal-down-aux tablero column position piece count)
-    (cond  
-      [(= count  4) piece]
-      [(empty-col? column) 0]
-      [(empty-position? position) 0]
-      [(string=? piece (get-piece position)) (count-pieces-diagonal-down-aux (next-columns tablero) (get-column (next-columns tablero)) (get-n-position (get-column (next-columns tablero)) (- (get-num position) 1)) piece (+ 1 count))]
-      [else 0])
-    )
+(define (board-check-vertical-win tablero players)
   (cond
-       [(empty-position? position) 0]
-       [else (count-pieces-diagonal-down-aux tablero column position (get-piece position) 1)]
-       )
+    [(out-of-board? tablero) 0]
+    [(= (column-check-vertical-win (get-column tablero) players) 0) (board-check-vertical-win (next-columns tablero) players)]
+    [else (column-check-vertical-win (get-column tablero) players)])
   )
 
+
+; Descripción: Función que verifica si alguien ha ganado de forma horizontal.
+; Dom: tablero (board) X lista de jugadores (list-players).
+; Rec: int (ID del ganador, 0 si es que no hay ganador).
+; Tipo recursión: Natural.
 
 (define (board-check-horizontal-win board players)
   (row-board-check-horizontal-win (row-board board) players))
 
-;(define (board-check-diagonal-win board players)
- ; (define (board-check-diagonal-win-aux board players column count piece)
-  ;  (cond
-   ;   [(end-board? board) 0]
-    ;  [(= count 4) (cond
-     ;                [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
-      ;               [else (get-id (get-next-player players))])]
-      ;[(empty-col? column) (board-check-diagonal-win (next-columns board) (get-column (next-columns board)) 1 "empty")]
-    ;  [(string?=)]
-     ; [(cond
-     ;    [()]
-     ;    [()])]
-   ; )(board-check-diagonal-win-aux board players (get-column board) 1 "empty")
- ; )
 
+
+(define (check-diagonal-win-down tablero column position players)
+  (cond
+    [(empty-position? position) 0]
+    [else (define (check-diagonal-win-down-aux tablero column position piece count players)
+            (cond
+              [(= count  4) (cond
+                              [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
+                              [else (get-id (get-next-player players))])]
+              [(out-of-board? tablero) 0]
+              [(empty-col? column) 0]
+              [(empty-position? position) 0]
+              [(string=? piece (get-piece position)) (cond
+                                                       [(= 3 count) (cond
+                                                                      [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
+                                                                      [else (get-id (get-next-player players))])]
+                                                       [else (check-diagonal-win-down-aux (next-columns tablero) (get-column (next-columns tablero)) (get-n-position (get-column (next-columns tablero)) (- (get-num position) 1)) piece (+ 1 count) players)])]
+              [else 0])
+            )(check-diagonal-win-down-aux tablero column position (get-piece position) 0 players)]
+    )
+  )
+
+
+(define (check-diagonal-win-up tablero column position players)
+  (cond
+    [(empty-position? position) 0]
+    [else (define (check-diagonal-win-up-aux tablero column position piece count players)
+            (cond
+              [(= count  4) (cond
+                              [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
+                              [else (get-id (get-next-player players))])]
+              [(out-of-board? tablero) 0]
+              [(empty-col? column) 0]
+              [(empty-position? position) 0]
+              [(string=? piece (get-piece position)) (cond
+                                                       [(= 3 count) (cond
+                                                                      [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
+                                                                      [else (get-id (get-next-player players))])]
+                                                       [else (check-diagonal-win-up-aux (next-columns tablero) (get-column (next-columns tablero)) (get-n-position (get-column (next-columns tablero)) (+ (get-num position) 1)) piece (+ 1 count) players)])]
+              [else 0])
+            )(check-diagonal-win-up-aux tablero column position (get-piece position) 0 players)]
+    )
+  )
+
+
+
+(define (board-check-diagonal-win board players)
+  (define (board-check-diagonal-win-aux board players position)
+    (cond
+      [(out-of-board? board) 0]
+      [(empty-position? position) (cond
+                          [(out-of-board? (next-columns board))  0]
+                          [else (board-check-diagonal-win-aux (next-columns board) players (get-position (get-column (next-columns board))))]
+                          )]
+      [(> (get-num position) 3) (cond
+                                   [(= 0 (check-diagonal-win-down board (get-column board) position players)) (board-check-diagonal-win-aux board players (get-n-position (get-column board) (- (get-num position) 1)))]
+                                   [else (check-diagonal-win-down board (get-column board) position players)])]
+      [else (cond
+              [(= 0 (check-diagonal-win-up board (get-column board) position players)) (board-check-diagonal-win-aux board players (get-n-position (get-column board) (- (get-num position) 1)))]
+              [else (check-diagonal-win-up board (get-column board) position players)])]
+   )
+    )(board-check-diagonal-win-aux board players (get-position (get-column board)))
+  )
