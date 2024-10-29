@@ -3,6 +3,7 @@
 (require "TDAposition.rkt")
 (require "TDAplayer.rkt")
 (require "TDAlist-players.rkt")
+(require "TDApiece.rkt")
 
 (provide empty-column)
 (provide column-full?)
@@ -135,21 +136,19 @@
 
 ; Descripción: Función que verifica si hay 4 fichas del mismo color en una columna
 ; y retorna el id del jugador correspondiente.
-; Dom: columna (column) X lista de jugadores (list-players).
+; Dom: columna (column).
 ; Rec: int (ID del ganador, 0 si es que no hay ganador).
 ; Tipo recursión: De cola.
 
-(define (column-check-vertical-win column players)
+(define (column-check-vertical-win column)
   (cond
     [(< (count-pieces column) 4) 0]
-    [else (define (column-check-vertical-win-aux column count piece players)
+    [else (define (column-check-vertical-win-aux column count piece)
        (cond
-         [(= 4 count) (cond
-                        [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
-                        [else (get-id (get-next-player players))])]
+         [(= 4 count) (get-id-piece piece)]
          [(empty-col? (next-positions column)) 0]
-         [(string=? (get-piece (next-position column)) piece) (column-check-vertical-win-aux (next-positions column) (+ 1 count) piece players)]
+         [(string=? (get-color-piece (get-piece (next-position column))) (get-color-piece piece)) (column-check-vertical-win-aux (next-positions column) (+ 1 count) piece)]
          [else (column-check-vertical-win-aux (next-positions column) 1 (get-piece (next-position column)))])
-            )(column-check-vertical-win-aux column 1 (get-n-piece column (count-pieces column)) players)]
+            )(column-check-vertical-win-aux column 1 (get-n-piece column (count-pieces column)))]
     )
   )

@@ -48,14 +48,14 @@
 
 
 ; Descripción: Función que verifica si hay ganador en un row-board.
-; Dom: tablero de filas (row-board) X lista de jugadores (list-players).
+; Dom: tablero de filas (row-board).
 ; Rec: int (ID del ganador, 0 si es que no hay ganador).
 ; Tipo recursión: Natural.
 
-(define (row-board-check-horizontal-win row-board players)
+(define (row-board-check-horizontal-win row-board)
  (cond
    [(end-row-board? row-board) 0]
-   [(= (row-check-horizontal-win (get-row row-board) players) 0) (row-board-check-horizontal-win (next-rows row-board) players)]
-   [else (row-check-horizontal-win (get-row row-board) players)]
+   [(= (row-check-horizontal-win (get-row row-board)) 0) (row-board-check-horizontal-win (next-rows row-board))]
+   [else (row-check-horizontal-win (get-row row-board))]
    )
   )

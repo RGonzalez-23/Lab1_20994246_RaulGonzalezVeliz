@@ -1,10 +1,16 @@
 #lang scheme
 
+(require "TDApiece.rkt")
 (require "TDAplayer.rkt")
 (require "TDAlist-players.rkt")
 (require "TDAposition.rkt")
 (require "TDAcolumn.rkt")
 (require "TDArow-board.rkt")
+(require "TDArow.rkt")
+
+(provide board-can-play?)
+(provide board-who-is-winner)
+(provide board)
 
 ; Descripción: Función que construye un tablero vacío de connect 4 a partir de 7 columnas vacías.
 ; Dom: No recibe parámetros de entrada.
@@ -135,87 +141,108 @@
 
 
 ; Descripción: Función que verifica si alguien ha ganado de forma vertical.
-; Dom: tablero (board) X lista de jugadores (list-players).
+; Dom: tablero (board).
 ; Rec: int (ID del ganador, 0 si es que no hay ganador).
 ; Tipo recursión: Natural.
 
-(define (board-check-vertical-win tablero players)
+(define (board-check-vertical-win tablero)
   (cond
     [(out-of-board? tablero) 0]
-    [(= (column-check-vertical-win (get-column tablero) players) 0) (board-check-vertical-win (next-columns tablero) players)]
-    [else (column-check-vertical-win (get-column tablero) players)])
+    [(= (column-check-vertical-win (get-column tablero)) 0) (board-check-vertical-win (next-columns tablero))]
+    [else (column-check-vertical-win (get-column tablero))])
   )
 
 
 ; Descripción: Función que verifica si alguien ha ganado de forma horizontal.
-; Dom: tablero (board) X lista de jugadores (list-players).
+; Dom: tablero (board).
 ; Rec: int (ID del ganador, 0 si es que no hay ganador).
 ; Tipo recursión: Natural.
 
-(define (board-check-horizontal-win board players)
-  (row-board-check-horizontal-win (row-board board) players))
+(define (board-check-horizontal-win board)
+  (row-board-check-horizontal-win (row-board board)))
 
 
+; Descripción: Función que verifica si hay 4 fichas de forma
+; diagonal hacia abajo en un tablero dada una posición y retorna el ID del ganador.
+; Dom: tablero (board) X columna (column) X posición (position).
+; Rec: int (ID del ganador, 0 si es que no hay ganador).
+; Tipo recursión: De cola.
 
-(define (check-diagonal-win-down tablero column position players)
+(define (check-diagonal-win-down tablero column position)
   (cond
     [(empty-position? position) 0]
-    [else (define (check-diagonal-win-down-aux tablero column position piece count players)
+    [else (define (check-diagonal-win-down-aux tablero column position piece count)
             (cond
-              [(= count  4) (cond
-                              [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
-                              [else (get-id (get-next-player players))])]
+              [(= count  4) (get-id-piece piece)]
               [(out-of-board? tablero) 0]
               [(empty-col? column) 0]
               [(empty-position? position) 0]
-              [(string=? piece (get-piece position)) (cond
-                                                       [(= 3 count) (cond
-                                                                      [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
-                                                                      [else (get-id (get-next-player players))])]
-                                                       [else (check-diagonal-win-down-aux (next-columns tablero) (get-column (next-columns tablero)) (get-n-position (get-column (next-columns tablero)) (- (get-num position) 1)) piece (+ 1 count) players)])]
+              [(string=? (get-color-piece piece) (get-color-piece (get-piece position))) (cond
+                                                       [(= 3 count) (get-id-piece piece)]
+                                                       [else (check-diagonal-win-down-aux (next-columns tablero) (get-column (next-columns tablero)) (get-n-position (get-column (next-columns tablero)) (- (get-num position) 1)) piece (+ 1 count))])]
               [else 0])
-            )(check-diagonal-win-down-aux tablero column position (get-piece position) 0 players)]
+            )(check-diagonal-win-down-aux tablero column position (get-piece position) 0)]
     )
   )
 
 
-(define (check-diagonal-win-up tablero column position players)
+; Descripción: Función que verifica si hay 4 fichas de forma
+; diagonal hacia arriba en un tablero dada una posición y retorna el ID del ganador.
+; Dom: tablero (board) X columna (column) X posición (position).
+; Rec: int (ID del ganador, 0 si es que no hay ganador).
+; Tipo recursión: De cola.
+
+(define (check-diagonal-win-up tablero column position)
   (cond
     [(empty-position? position) 0]
-    [else (define (check-diagonal-win-up-aux tablero column position piece count players)
+    [else (define (check-diagonal-win-up-aux tablero column position piece count)
             (cond
-              [(= count  4) (cond
-                              [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
-                              [else (get-id (get-next-player players))])]
+              [(= count  4) (get-id-piece piece)]
               [(out-of-board? tablero) 0]
               [(empty-col? column) 0]
               [(empty-position? position) 0]
-              [(string=? piece (get-piece position)) (cond
-                                                       [(= 3 count) (cond
-                                                                      [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
-                                                                      [else (get-id (get-next-player players))])]
-                                                       [else (check-diagonal-win-up-aux (next-columns tablero) (get-column (next-columns tablero)) (get-n-position (get-column (next-columns tablero)) (+ (get-num position) 1)) piece (+ 1 count) players)])]
+              [(string=? (get-color-piece piece) (get-color-piece (get-piece position))) (cond
+                                                       [(= 3 count) (get-id-piece piece)]
+                                                       [else (check-diagonal-win-up-aux (next-columns tablero) (get-column (next-columns tablero)) (get-n-position (get-column (next-columns tablero)) (+ (get-num position) 1)) piece (+ 1 count))])]
               [else 0])
-            )(check-diagonal-win-up-aux tablero column position (get-piece position) 0 players)]
+            )(check-diagonal-win-up-aux tablero column position (get-piece position) 0)]
     )
   )
 
 
+; Descripción: Función que verifica si hay una victoria
+; diagonal en un tablero y retorna el ID del ganador.
+; Dom: tablero (board).
+; Rec: int (ID del ganador, 0 si es que no hay ganador).
+; Tipo recursión: De cola.
 
-(define (board-check-diagonal-win board players)
-  (define (board-check-diagonal-win-aux board players position)
+(define (board-check-diagonal-win board)
+  (define (board-check-diagonal-win-aux board position)
     (cond
       [(out-of-board? board) 0]
       [(empty-position? position) (cond
                           [(out-of-board? (next-columns board))  0]
-                          [else (board-check-diagonal-win-aux (next-columns board) players (get-position (get-column (next-columns board))))]
+                          [else (board-check-diagonal-win-aux (next-columns board) (get-position (get-column (next-columns board))))]
                           )]
       [(> (get-num position) 3) (cond
-                                   [(= 0 (check-diagonal-win-down board (get-column board) position players)) (board-check-diagonal-win-aux board players (get-n-position (get-column board) (- (get-num position) 1)))]
-                                   [else (check-diagonal-win-down board (get-column board) position players)])]
+                                   [(= 0 (check-diagonal-win-down board (get-column board) position)) (board-check-diagonal-win-aux board (get-n-position (get-column board) (- (get-num position) 1)))]
+                                   [else (check-diagonal-win-down board (get-column board) position)])]
       [else (cond
-              [(= 0 (check-diagonal-win-up board (get-column board) position players)) (board-check-diagonal-win-aux board players (get-n-position (get-column board) (- (get-num position) 1)))]
-              [else (check-diagonal-win-up board (get-column board) position players)])]
+              [(= 0 (check-diagonal-win-up board (get-column board) position)) (board-check-diagonal-win-aux board (get-n-position (get-column board) (- (get-num position) 1)))]
+              [else (check-diagonal-win-up board (get-column board) position)])]
    )
-    )(board-check-diagonal-win-aux board players (get-position (get-column board)))
+    )(board-check-diagonal-win-aux board (get-position (get-column board)))
+  )
+
+
+; Descripción: Función que verifica si hay una victoria en un tablero.
+; Dom: tablero (board).
+; Rec: int (ID del ganador, 0 si es que no hay ganador).
+; Tipo recursión: No aplica.
+
+(define (board-who-is-winner board)
+  (cond
+    [(not (= 0 (board-check-vertical-win board))) (board-check-vertical-win board)]
+    [(not (= 0 (board-check-horizontal-win board))) (board-check-horizontal-win board)]
+    [else (board-check-diagonal-win board)])
   )

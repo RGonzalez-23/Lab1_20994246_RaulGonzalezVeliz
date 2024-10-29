@@ -2,12 +2,9 @@
 
 (require "TDAplayer.rkt")
 (require "TDAlist-players.rkt")
-(require "TDApiece.rkt")
 
 (provide row-check-horizontal-win)
-(provide get-ficha)
-(provide count-fichas)
-(provide empty-space?)
+
 
 
 
@@ -58,31 +55,33 @@
   (define (count-fichas-aux row total)
     (cond
       [(end-row? row) total]
-      [(empty-space? row) (count-fichas-aux (next-fichas row) total)]
-      [else (count-fichas-aux (next-fichas row) (+ 1 total))])
+      [(string? (get-ficha row)) (count-fichas-aux (next-fichas row) (+ 1 total))]
+      [else (count-fichas-aux (next-fichas row) total)])
     )(count-fichas-aux row 0)
   )
 
 
 ; Descripción: Función que verifica si hay 4 fichas del mismo color en una columna
 ; y retorna el id del jugador correspondiente.
-; Dom: fila (row).
+; Dom: fila (row) X lista de jugadores (list-players).
 ; Rec: int (ID del ganador, 0 si es que no hay ganador).
 ; Tipo recursión: De cola.
 
-(define (row-check-horizontal-win row)
+(define (row-check-horizontal-win row players)
   (cond
     [(< (count-fichas row) 4) 0]
-    [else (define (row-check-horizontal-win-aux row count piece)
+    [else (define (row-check-horizonal-win-aux row players count piece)
             (cond
-              [(= count 4) (get-id-piece piece)]
+              [(= count 4) (cond
+                             [(string=? piece (get-color (get-player players))) (get-id (get-player players))]
+                             [else (get-id (get-next-player players))])]
               [(end-row? row) 0]
-              [(empty-space? row) (row-check-horizontal-win-aux (next-fichas row) 0 piece)]
-              [(string=? (get-color-piece piece) (get-color-piece (get-ficha row))) (row-check-horizontal-win-aux (next-fichas row) (+ 1 count) piece)]
-              [else (row-check-horizontal-win-aux (next-fichas row) 1 (get-ficha row))])
+              [(empty-space? row) (row-check-horizonal-win-aux (next-fichas row) players 0 piece)]
+              [(string=? piece (get-ficha row)) (row-check-horizonal-win-aux (next-fichas row) players (+ 1 count) piece)]
+              [else (row-check-horizonal-win-aux (next-fichas row) players 1 (get-ficha row))])
             )(cond
-               [(empty-space? row) (row-check-horizontal-win-aux (next-fichas row) 1 (piece "empty"))]
-               [else (row-check-horizontal-win-aux (next-fichas row) 1 (get-ficha row))])]
+               [(string? (get-ficha row)) (row-check-horizonal-win-aux row players 1 (get-ficha row))]
+               [else (row-check-horizonal-win-aux (next-fichas row) players 1 "empty")])]
     )
   )
 

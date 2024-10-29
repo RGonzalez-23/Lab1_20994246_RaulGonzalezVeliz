@@ -1,10 +1,16 @@
 #lang scheme
 
-(define (piece color)
-  (list (string-downcase color))
-  )
 
-(define (vacio? piece)
-  (if (null? piece) #t
-      #f)
+
+
+
+
+; Descripción: Función que genera una ficha de conecta 4.
+; Dom: color (string).
+; Rec: ficha (piece). 
+; Tipo recursión: No aplica.
+
+(define (piece color)
+  (string-downcase color)
   )
+  

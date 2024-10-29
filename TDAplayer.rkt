@@ -3,7 +3,8 @@
 (provide player)
 (provide get-id)
 (provide get-color)
-
+(provide get-remaining)
+(provide player-update-stats)
 
 
 
@@ -86,7 +87,7 @@
 ; Tipo recursión: No aplica.
 
 (define (add-win jugador)
-  (player (get-id jugador) (get-name jugador) (get-color jugador) (+ 1 (get-wins jugador)) (get-losses jugador) (get-draws jugador) (get-remaining jugador)))
+  (player (get-id jugador) (get-name jugador) (get-color jugador) (+ 1 (get-wins jugador)) (get-losses jugador) (get-draws jugador) 21))
 
 
 ; Descripción: Función que le suma una derrota a un jugador.
@@ -95,7 +96,7 @@
 ; Tipo recursión: No aplica.
 
 (define (add-loss jugador)
-  (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador) (+ 1 (get-losses jugador)) (get-draws jugador) (get-remaining jugador)))
+  (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador) (+ 1 (get-losses jugador)) (get-draws jugador) 21))
 
 
 ; Descripción: Función que le suma un empate a un jugador.
@@ -104,7 +105,7 @@
 ; Tipo recursión: No aplica.
 
 (define (add-draw jugador)
-  (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador) (get-losses jugador) (+ 1 (get-draws jugador)) (get-remaining jugador)))
+  (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador) (get-losses jugador) (+ 1 (get-draws jugador)) 21))
 
 
 ; Descripción: Función que le resta una ficha a un jugador.
@@ -114,3 +115,17 @@
 
 (define (rest-piece jugador)
   (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador) (get-losses jugador) (get-draws jugador) (- (get-remaining jugador) 1)))
+
+
+; Descripción: Función que actualiza el estado de un jugador
+; después de una partida según el resultado de esta.
+; Dom: jugador (player) X resultado (string).
+; Rec: jugador (player). 
+; Tipo recursión: No aplica.
+
+(define (player-update-stats player result)
+  (cond
+    [(string=? result "win") (add-win player)]
+    [(string=? result "loss") (add-loss player)]
+    [else (add-draw player)])
+  )
