@@ -4,8 +4,8 @@
 (provide get-color-piece)
 (provide get-id-piece)
 (provide change-id-piece)
-(provide piece?)
 (provide empty-piece?)
+
 
 
 

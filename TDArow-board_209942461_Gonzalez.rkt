@@ -1,8 +1,6 @@
 #lang scheme
 
-(require "TDArow.rkt")
-(require "TDAplayer.rkt")
-(require "TDAlist-players.rkt")
+(require "TDArow_209942461_Gonzalez.rkt")
 
 (provide append-row)
 (provide row-board-check-horizontal-win)
@@ -55,7 +53,8 @@
 (define (row-board-check-horizontal-win row-board)
  (cond
    [(end-row-board? row-board) 0]
-   [(= (row-check-horizontal-win (get-row row-board)) 0) (row-board-check-horizontal-win (next-rows row-board))]
+   [(= (row-check-horizontal-win (get-row row-board)) 0)
+    (row-board-check-horizontal-win (next-rows row-board))]
    [else (row-check-horizontal-win (get-row row-board))]
    )
   )

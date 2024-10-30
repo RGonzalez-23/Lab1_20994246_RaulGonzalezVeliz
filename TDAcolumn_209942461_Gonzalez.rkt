@@ -1,9 +1,7 @@
 #lang scheme
 
-(require "TDAposition.rkt")
-(require "TDAplayer.rkt")
-(require "TDAlist-players.rkt")
-(require "TDApiece.rkt")
+(require "TDAposition_209942461_Gonzalez.rkt")
+(require "TDApiece_209942461_Gonzalez.rkt")
 
 (provide empty-column)
 (provide column-full?)
@@ -147,7 +145,8 @@
        (cond
          [(= 4 count) (get-id-piece piece)]
          [(empty-col? (next-positions column)) 0]
-         [(string=? (get-color-piece (get-piece (next-position column))) (get-color-piece piece)) (column-check-vertical-win-aux (next-positions column) (+ 1 count) piece)]
+         [(string=? (get-color-piece (get-piece (next-position column))) (get-color-piece piece))
+          (column-check-vertical-win-aux (next-positions column) (+ 1 count) piece)]
          [else (column-check-vertical-win-aux (next-positions column) 1 (get-piece (next-position column)))])
             )(column-check-vertical-win-aux column 1 (get-n-piece column (count-pieces column)))]
     )

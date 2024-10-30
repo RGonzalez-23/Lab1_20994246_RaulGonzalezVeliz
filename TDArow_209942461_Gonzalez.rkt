@@ -1,13 +1,12 @@
 #lang scheme
 
-(require "TDAplayer.rkt")
-(require "TDAlist-players.rkt")
-(require "TDApiece.rkt")
+(require "TDApiece_209942461_Gonzalez.rkt")
 
 (provide row-check-horizontal-win)
 (provide get-ficha)
 (provide count-fichas)
 (provide empty-space?)
+
 
 
 
@@ -78,7 +77,8 @@
               [(= count 4) (get-id-piece piece)]
               [(end-row? row) 0]
               [(empty-space? row) (row-check-horizontal-win-aux (next-fichas row) 0 piece)]
-              [(string=? (get-color-piece piece) (get-color-piece (get-ficha row))) (row-check-horizontal-win-aux (next-fichas row) (+ 1 count) piece)]
+              [(string=? (get-color-piece piece) (get-color-piece (get-ficha row)))
+               (row-check-horizontal-win-aux (next-fichas row) (+ 1 count) piece)]
               [else (row-check-horizontal-win-aux (next-fichas row) 1 (get-ficha row))])
             )(cond
                [(empty-space? row) (row-check-horizontal-win-aux (next-fichas row) 1 (piece "empty"))]

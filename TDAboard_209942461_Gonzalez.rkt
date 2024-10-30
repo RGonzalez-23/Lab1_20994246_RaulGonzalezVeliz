@@ -1,16 +1,21 @@
 #lang scheme
 
-(require "TDApiece.rkt")
-(require "TDAplayer.rkt")
-(require "TDAlist-players.rkt")
-(require "TDAposition.rkt")
-(require "TDAcolumn.rkt")
-(require "TDArow-board.rkt")
-(require "TDArow.rkt")
+(require "TDApiece_209942461_Gonzalez.rkt")
+(require "TDAposition_209942461_Gonzalez.rkt")
+(require "TDAcolumn_209942461_Gonzalez.rkt")
+(require "TDArow-board_209942461_Gonzalez.rkt")
 
 (provide board-can-play?)
 (provide board-who-is-winner)
 (provide board)
+(provide board-set-play-piece)
+(provide board-check-vertical-win)
+(provide board-check-horizontal-win)
+(provide board-check-diagonal-win)
+(provide get-column)
+(provide next-columns)
+
+
 
 ; Descripción: Función que construye un tablero vacío de connect 4 a partir de 7 columnas vacías.
 ; Dom: No recibe parámetros de entrada.
@@ -108,7 +113,7 @@
 ; Rec: tablero (board).
 ; Tipo recursión: No aplica.
 
-(define (board-set-piece tablero n-column piece)
+(define (board-set-play-piece tablero n-column piece)
   (update-column-board tablero n-column (insert-piece piece (get-n-column tablero n-column)))
   )
 
@@ -179,7 +184,10 @@
               [(empty-position? position) 0]
               [(string=? (get-color-piece piece) (get-color-piece (get-piece position))) (cond
                                                        [(= 3 count) (get-id-piece piece)]
-                                                       [else (check-diagonal-win-down-aux (next-columns tablero) (get-column (next-columns tablero)) (get-n-position (get-column (next-columns tablero)) (- (get-num position) 1)) piece (+ 1 count))])]
+                                                       [else (check-diagonal-win-down-aux
+                                                              (next-columns tablero) (get-column (next-columns tablero))
+                                                              (get-n-position (get-column (next-columns tablero))
+                                                                              (- (get-num position) 1)) piece (+ 1 count))])]
               [else 0])
             )(check-diagonal-win-down-aux tablero column position (get-piece position) 0)]
     )
@@ -203,7 +211,10 @@
               [(empty-position? position) 0]
               [(string=? (get-color-piece piece) (get-color-piece (get-piece position))) (cond
                                                        [(= 3 count) (get-id-piece piece)]
-                                                       [else (check-diagonal-win-up-aux (next-columns tablero) (get-column (next-columns tablero)) (get-n-position (get-column (next-columns tablero)) (+ (get-num position) 1)) piece (+ 1 count))])]
+                                                       [else (check-diagonal-win-up-aux
+                                                              (next-columns tablero) (get-column (next-columns tablero))
+                                                              (get-n-position (get-column (next-columns tablero))
+                                                                              (+ (get-num position) 1)) piece (+ 1 count))])]
               [else 0])
             )(check-diagonal-win-up-aux tablero column position (get-piece position) 0)]
     )
@@ -222,13 +233,17 @@
       [(out-of-board? board) 0]
       [(empty-position? position) (cond
                           [(out-of-board? (next-columns board))  0]
-                          [else (board-check-diagonal-win-aux (next-columns board) (get-position (get-column (next-columns board))))]
+                          [else (board-check-diagonal-win-aux
+                                 (next-columns board) (get-position (get-column (next-columns board))))]
                           )]
       [(> (get-num position) 3) (cond
-                                   [(= 0 (check-diagonal-win-down board (get-column board) position)) (board-check-diagonal-win-aux board (get-n-position (get-column board) (- (get-num position) 1)))]
+                                   [(= 0 (check-diagonal-win-down board (get-column board) position))
+                                    (board-check-diagonal-win-aux board (get-n-position (get-column board)
+                                                                                        (- (get-num position) 1)))]
                                    [else (check-diagonal-win-down board (get-column board) position)])]
       [else (cond
-              [(= 0 (check-diagonal-win-up board (get-column board) position)) (board-check-diagonal-win-aux board (get-n-position (get-column board) (- (get-num position) 1)))]
+              [(= 0 (check-diagonal-win-up board (get-column board) position))
+               (board-check-diagonal-win-aux board (get-n-position (get-column board) (- (get-num position) 1)))]
               [else (check-diagonal-win-up board (get-column board) position)])]
    )
     )(board-check-diagonal-win-aux board (get-position (get-column board)))

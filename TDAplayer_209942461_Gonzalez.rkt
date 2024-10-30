@@ -5,6 +5,8 @@
 (provide get-color)
 (provide get-remaining)
 (provide player-update-stats)
+(provide rest-piece)
+
 
 
 
@@ -87,7 +89,8 @@
 ; Tipo recursión: No aplica.
 
 (define (add-win jugador)
-  (player (get-id jugador) (get-name jugador) (get-color jugador) (+ 1 (get-wins jugador)) (get-losses jugador) (get-draws jugador) 21))
+  (player (get-id jugador) (get-name jugador) (get-color jugador) (+ 1 (get-wins jugador))
+          (get-losses jugador) (get-draws jugador) 21))
 
 
 ; Descripción: Función que le suma una derrota a un jugador.
@@ -96,7 +99,8 @@
 ; Tipo recursión: No aplica.
 
 (define (add-loss jugador)
-  (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador) (+ 1 (get-losses jugador)) (get-draws jugador) 21))
+  (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador)
+          (+ 1 (get-losses jugador)) (get-draws jugador) 21))
 
 
 ; Descripción: Función que le suma un empate a un jugador.
@@ -105,7 +109,8 @@
 ; Tipo recursión: No aplica.
 
 (define (add-draw jugador)
-  (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador) (get-losses jugador) (+ 1 (get-draws jugador)) 21))
+  (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador)
+          (get-losses jugador) (+ 1 (get-draws jugador)) 21))
 
 
 ; Descripción: Función que le resta una ficha a un jugador.
@@ -114,7 +119,8 @@
 ; Tipo recursión: No aplica.
 
 (define (rest-piece jugador)
-  (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador) (get-losses jugador) (get-draws jugador) (- (get-remaining jugador) 1)))
+  (player (get-id jugador) (get-name jugador) (get-color jugador) (get-wins jugador)
+          (get-losses jugador) (get-draws jugador) (- (get-remaining jugador) 1)))
 
 
 ; Descripción: Función que actualiza el estado de un jugador
