@@ -25,7 +25,7 @@
     [(or (> (get-remaining player-1) 21) (> (get-remaining player-2) 21)) (display "Juego inválido (Uno o ambos jugadores poseen una cantidad de fichas inválida). Inténtelo de nuevo.")]
     [(= (get-id player-1) (get-id player-2)) (display "Juego inválido (ambos jugadores tienen el mismo ID). Inténtelo de nuevo.")]
     [(not (or (= 1 current-turn) (= 2 current-turn))) (display "Juego inválido (el turno no es válido para ninguno de los jugadores) Inténtelo de nuevo")]
-    [else (list player-1 player-2 board current-turn)])
+    [else (list player-1 player-2 board current-turn '())])
   )
 
 
@@ -70,6 +70,24 @@
   (car (cdr (cdr (cdr game))))
   )
 
+
+(define (game-history game)
+  (cdr (cdr (cdr (cdr game))))
+  )
+
+(define (movement column color)
+  (cons column color)
+  )
+
+(define (update-movement-history history movement)
+  (cons movement history)
+  )
+
+(define (game-history-update game updated-history)
+  (cond
+    [(null? (cdr game)) updated-history]
+    [else (cons (car game) (game-history-update (cdr game) updated-history))])
+  )
 
 ; Descripción: Función que verifica si un juego está empatado.
 ; Dom: juego (game).
@@ -135,16 +153,18 @@
   (cond
     [(= (get-current-turn juego) (get-id player)) (cond
                                                     [(= (get-id player) (get-id (get-first-player juego)))
-                                                     (game-set-end (game (rest-piece player)
+                                                     (game-set-end (game-history-update (game (rest-piece player)
                                                                          (get-second-player juego)
                                                                          (board-set-play-piece (game-get-board juego) num-column
                                                                                           (change-id-piece (piece (get-color player))
                                                                                                            (get-id player)))
-                                                     (change-turn (get-current-turn juego))))]
-                                                    [else (game-set-end (game (get-first-player juego) (rest-piece player)
+                                                     (change-turn (get-current-turn juego))) (update-movement-history (game-history juego)
+                                                                                                                      (movement num-column (get-color player)))))]
+                                                    [else (game-set-end (game-history-update (game (get-first-player juego) (rest-piece player)
                                                      (board-set-play-piece (game-get-board juego) num-column
                                                                       (change-id-piece (piece (get-color player)) (get-id player)))
-                                                     (change-turn (get-current-turn juego))))]
+                                                     (change-turn (get-current-turn juego))) (update-movement-history (game-history juego)
+                                                                                                                       (movement num-column (get-color player)))))]
                                                     )]
     [else
      (display "No corresponde turno de jugador.")
