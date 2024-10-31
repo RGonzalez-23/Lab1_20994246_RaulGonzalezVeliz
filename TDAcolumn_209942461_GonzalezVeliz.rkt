@@ -1,7 +1,7 @@
 #lang scheme
 
-(require "TDAposition_209942461_Gonzalez.rkt")
-(require "TDApiece_209942461_Gonzalez.rkt")
+(require "TDAposition_209942461_GonzalezVeliz.rkt")
+(require "TDApiece_209942461_GonzalezVeliz.rkt")
 
 (provide empty-column)
 (provide column-full?)

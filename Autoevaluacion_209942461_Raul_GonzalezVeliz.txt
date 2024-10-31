@@ -1,4 +1,31 @@
-1. RF1 - TDAs: 1
+Requisitos no Funcionales
+
+1. RNF1 - Autoevaluación: 1
+
+2. RNF2 - Lenguaje: 1
+
+2. RNF3 - Versión: 1
+
+4. RNF4 - Standard: 1
+
+5. RNF5 - No variables: 1
+
+6. RNF6 - Documentación: 1
+
+7. RNF7 - Dom->Rec: 1
+
+8. RNF8 - Organización: 1
+
+9. RNF9 - Historial: 1
+
+10. RNF10 - Script de pruebas: 1
+
+11. RNF11 - Prerrequisitos: 1
+
+========================================================================
+Requisitos Funcionales
+
+1. RF1 - TDAs: 0,75
 
 2. RF2 - player: 1
 
@@ -20,7 +47,7 @@
 
 11. RF11 - game: 1
 
-12. RF12 - game-history: 0
+12. RF12 - game-history: 1
 
 13. RF13 - game-is-draw?: 1
 

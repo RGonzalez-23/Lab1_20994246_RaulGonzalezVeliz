@@ -1,6 +1,6 @@
 #lang scheme
 
-(require "TDApiece_209942461_Gonzalez.rkt")
+(require "TDApiece_209942461_GonzalezVeliz.rkt")
 
 (provide row-check-horizontal-win)
 (provide get-ficha)

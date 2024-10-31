@@ -1,8 +1,8 @@
 #lang scheme
 
-(require "TDAplayer_209942461_Gonzalez.rkt")
-(require "TDAboard_209942461_Gonzalez.rkt")
-(require "TDApiece_209942461_Gonzalez.rkt")
+(require "TDAplayer_209942461_GonzalezVeliz.rkt")
+(require "TDAboard_209942461_GonzalezVeliz.rkt")
+(require "TDApiece_209942461_GonzalezVeliz.rkt")
 
 (provide game)
 (provide game-is-draw?)
@@ -10,17 +10,23 @@
 (provide game-get-board)
 (provide game-set-end)
 (provide game-player-set-move)
+(provide game-history)
 
 
 
-
-; Descripción: Función que contruye un TDA game.
+; Descripción: Función que contruye un TDA game y verifica que los datos ingresados sean válidos.
 ; Dom: jugador (player) X jugador (player) X tablero (board) X turno en curso (int).
 ; Rec: juego (game).
 ; Tipo recursión: No aplica.
 
 (define (game player-1 player-2 board current-turn)
-  (list player-1 player-2 board current-turn))
+  (cond
+    [(string=? (get-color player-1) (get-color player-2)) (display "Juego inválido (ambos jugadores tienen el mismo color de ficha). Inténtelo de nuevo.")]
+    [(or (> (get-remaining player-1) 21) (> (get-remaining player-2) 21)) (display "Juego inválido (Uno o ambos jugadores poseen una cantidad de fichas inválida). Inténtelo de nuevo.")]
+    [(= (get-id player-1) (get-id player-2)) (display "Juego inválido (ambos jugadores tienen el mismo ID). Inténtelo de nuevo.")]
+    [(not (or (= 1 current-turn) (= 2 current-turn))) (display "Juego inválido (el turno no es válido para ninguno de los jugadores) Inténtelo de nuevo")]
+    [else (list player-1 player-2 board current-turn (list "Tablero vacío"))])
+  )
 
 
 ; Descripción: Función que obtiene el primer jugador de un juego.
@@ -65,6 +71,47 @@
   )
 
 
+; Descripción: Función que obtiene el historial de un juego.
+; Dom: juego (game).
+; Rec: History.
+; Tipo recursión: No aplica.
+
+(define (game-history game)
+  (cdr (cdr (cdr (cdr game))))
+  )
+
+
+; Descripción: Función que construye el par columna-color para registrar en el historial de un juego.
+; Dom: numero de columna (int) X  color (str).
+; Rec: movimiento (movement).
+; Tipo recursión: No aplica.
+
+(define (movement column color)
+  (cons column color)
+  )
+
+
+; Descripción: Función que actualiza un historial.
+; Dom: History X movimiento (movement).
+; Rec: History.
+; Tipo recursión: No aplica.
+
+(define (update-movement-history history movement)
+  (cons movement history)
+  )
+
+
+; Descripción: Función que actualiza el historial dentro de un juego.
+; Dom: juego (game) X History.
+; Rec: juego (game).
+; Tipo recursión: Natural.
+
+(define (game-history-update game updated-history)
+  (cond
+    [(null? (cdr game)) updated-history]
+    [else (cons (car game) (game-history-update (cdr game) updated-history))])
+  )
+
 ; Descripción: Función que verifica si un juego está empatado.
 ; Dom: juego (game).
 ; Rec: boolean (# t si el juego está empatado, #f si no).
@@ -78,6 +125,12 @@
     [(and (= 0 (get-remaining (get-first-player game))) (= 0 (get-remaining (get-second-player game)))) #t]
     [else #f])
   )
+
+
+; Descripción: Función obtiene el jugador del turno en curso.
+; Dom: juego (game).
+; Rec: boolean (# t si el juego está empatado, #f si no).
+; Tipo recursión: No aplica.
 
 (define (game-get-current-player game)
   (cond
@@ -105,17 +158,20 @@
 
 (define (game-set-end juego)
   (cond
-    [(game-is-draw? juego) (game (player-update-stats (get-first-player juego) "draw")
-                                 (player-update-stats (get-second-player juego) "draw") (board) 1)]
+    [(game-is-draw? juego) (game-history-update (game (player-update-stats (get-first-player juego) "draw")
+                                 (player-update-stats (get-second-player juego) "draw") (game-get-board juego) (change-turn (get-current-turn juego))) (update-movement-history
+                                                                                                                                         (game-history juego)
+                                                                                                                                         (list "Fin de juego. Generando siguiente tablero vacío...")))]
     [(not (= 0 (board-who-is-winner (game-get-board juego)))) (cond
                                                           [(= (board-who-is-winner (game-get-board juego))
                                                               (get-id (get-first-player juego)))
-                                                           (game (player-update-stats (get-first-player juego) "win")
+                                                           (game-history-update (game (player-update-stats (get-first-player juego) "win")
                                                                  (player-update-stats (get-second-player juego) "loss")
-                                                                 (board) 1)]
-                                                          [else (game (player-update-stats (get-first-player juego) "loss")
+                                                                 (game-get-board juego) (change-turn (get-current-turn juego))) (update-movement-history (game-history juego)
+                                                                                                                                          (list "Fin de juego. Generando siguiente tablero vacío...")))]
+                                                          [else (game-history-update (game (player-update-stats (get-first-player juego) "loss")
                                                                       (player-update-stats (get-second-player juego) "win")
-                                                                      (board) 1)])]      
+                                                                      (game-get-board juego) (change-turn (get-current-turn juego))) (update-movement-history (game-history juego) (list "Fin de juego. Generando siguiente tablero vacío...")))])]      
     [else juego]))
 
 
@@ -127,18 +183,21 @@
 
 (define (game-player-set-move juego player num-column)
   (cond
+    [(= 0 (get-remaining player)) (display "Jugador sin fichas para jugar./n") juego]
     [(= (get-current-turn juego) (get-id player)) (cond
                                                     [(= (get-id player) (get-id (get-first-player juego)))
-                                                     (game-set-end (game (rest-piece player)
+                                                      (game-history-update (game (rest-piece player)
                                                                          (get-second-player juego)
                                                                          (board-set-play-piece (game-get-board juego) num-column
                                                                                           (change-id-piece (piece (get-color player))
                                                                                                            (get-id player)))
-                                                     (change-turn (get-current-turn juego))))]
-                                                    [else (game-set-end (game (get-first-player juego) (rest-piece player)
+                                                     (change-turn (get-current-turn juego))) (update-movement-history (game-history juego)
+                                                                                                                      (movement num-column (get-color player))))]
+                                                    [else (game-history-update (game (get-first-player juego) (rest-piece player)
                                                      (board-set-play-piece (game-get-board juego) num-column
                                                                       (change-id-piece (piece (get-color player)) (get-id player)))
-                                                     (change-turn (get-current-turn juego))))]
+                                                     (change-turn (get-current-turn juego))) (update-movement-history (game-history juego)
+                                                                                                                       (movement num-column (get-color player))))]
                                                     )]
     [else
      (display "No corresponde turno de jugador.")

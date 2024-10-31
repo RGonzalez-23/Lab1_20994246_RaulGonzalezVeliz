@@ -35,7 +35,8 @@
 ; Tipo recursión: No aplica.
 
 (define (get-color-piece piece)
-  (car piece))
+  (car piece)
+  )
 
 
 ; Descripción: Función que obtiene el ID asociado a una ficha de conecta 4.
@@ -54,4 +55,5 @@
 ; Tipo recursión: No aplica.
 
 (define (change-id-piece piece new-id)
-  (cons (get-color-piece piece) new-id))
+  (cons (get-color-piece piece) new-id)
+  )

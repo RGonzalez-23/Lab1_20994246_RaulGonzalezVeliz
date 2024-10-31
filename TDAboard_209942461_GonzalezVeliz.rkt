@@ -1,9 +1,9 @@
 #lang scheme
 
-(require "TDApiece_209942461_Gonzalez.rkt")
-(require "TDAposition_209942461_Gonzalez.rkt")
-(require "TDAcolumn_209942461_Gonzalez.rkt")
-(require "TDArow-board_209942461_Gonzalez.rkt")
+(require "TDApiece_209942461_GonzalezVeliz.rkt")
+(require "TDAposition_209942461_GonzalezVeliz.rkt")
+(require "TDAcolumn_209942461_GonzalezVeliz.rkt")
+(require "TDArow-board_209942461_GonzalezVeliz.rkt")
 
 (provide board-can-play?)
 (provide board-who-is-winner)
@@ -179,11 +179,12 @@
     [else (define (check-diagonal-win-down-aux tablero column position piece count)
             (cond
               [(= count  4) (get-id-piece piece)]
-              [(out-of-board? tablero) 0]
-              [(empty-col? column) 0]
-              [(empty-position? position) 0]
               [(string=? (get-color-piece piece) (get-color-piece (get-piece position))) (cond
                                                        [(= 3 count) (get-id-piece piece)]
+                                                       [(out-of-board? (next-columns tablero)) 0]
+                                                       [(empty-col? (get-column (next-columns tablero))) 0]
+                                                       [(empty-position? (get-n-position (get-column (next-columns tablero))
+                                                                              (- (get-num position) 1))) 0]
                                                        [else (check-diagonal-win-down-aux
                                                               (next-columns tablero) (get-column (next-columns tablero))
                                                               (get-n-position (get-column (next-columns tablero))
@@ -206,11 +207,12 @@
     [else (define (check-diagonal-win-up-aux tablero column position piece count)
             (cond
               [(= count  4) (get-id-piece piece)]
-              [(out-of-board? tablero) 0]
-              [(empty-col? column) 0]
-              [(empty-position? position) 0]
               [(string=? (get-color-piece piece) (get-color-piece (get-piece position))) (cond
                                                        [(= 3 count) (get-id-piece piece)]
+                                                       [(out-of-board? (next-columns tablero)) 0]
+                                                       [(empty-col? (get-column (next-columns tablero))) 0]
+                                                       [(empty-position? (get-n-position (get-column (next-columns tablero))
+                                                                              (+ (get-num position) 1))) 0]
                                                        [else (check-diagonal-win-up-aux
                                                               (next-columns tablero) (get-column (next-columns tablero))
                                                               (get-n-position (get-column (next-columns tablero))

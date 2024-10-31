@@ -1,6 +1,6 @@
 #lang scheme
 
-(require "TDArow_209942461_Gonzalez.rkt")
+(require "TDArow_209942461_GonzalezVeliz.rkt")
 
 (provide append-row)
 (provide row-board-check-horizontal-win)
