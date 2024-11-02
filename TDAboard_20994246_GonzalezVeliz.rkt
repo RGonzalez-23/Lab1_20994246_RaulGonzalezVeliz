@@ -1,9 +1,9 @@
 #lang scheme
 
-(require "TDApiece_209942461_GonzalezVeliz.rkt")
-(require "TDAposition_209942461_GonzalezVeliz.rkt")
-(require "TDAcolumn_209942461_GonzalezVeliz.rkt")
-(require "TDArow-board_209942461_GonzalezVeliz.rkt")
+(require "TDApiece_20994246_GonzalezVeliz.rkt")
+(require "TDAposition_20994246_GonzalezVeliz.rkt")
+(require "TDAcolumn_20994246_GonzalezVeliz.rkt")
+(require "TDArow-board_20994246_GonzalezVeliz.rkt")
 
 (provide board-can-play?)
 (provide board-who-is-winner)

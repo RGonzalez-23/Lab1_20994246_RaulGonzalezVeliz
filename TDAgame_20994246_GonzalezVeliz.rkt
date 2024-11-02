@@ -1,8 +1,8 @@
 #lang scheme
 
-(require "TDAplayer_209942461_GonzalezVeliz.rkt")
-(require "TDAboard_209942461_GonzalezVeliz.rkt")
-(require "TDApiece_209942461_GonzalezVeliz.rkt")
+(require "TDAplayer_20994246_GonzalezVeliz.rkt")
+(require "TDAboard_20994246_GonzalezVeliz.rkt")
+(require "TDApiece_20994246_GonzalezVeliz.rkt")
 
 (provide game)
 (provide game-is-draw?)

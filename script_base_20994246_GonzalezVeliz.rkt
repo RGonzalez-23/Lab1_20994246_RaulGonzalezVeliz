@@ -1,9 +1,9 @@
 #lang scheme
 
-(require "TDAplayer_209942461_GonzalezVeliz.rkt")
-(require "TDApiece_209942461_GonzalezVeliz.rkt")
-(require "TDAboard_209942461_GonzalezVeliz.rkt")
-(require "TDAgame_209942461_GonzalezVeliz.rkt")
+(require "TDAplayer_20994246_GonzalezVeliz.rkt")
+(require "TDApiece_20994246_GonzalezVeliz.rkt")
+(require "TDAboard_20994246_GonzalezVeliz.rkt")
+(require "TDAgame_20994246_GonzalezVeliz.rkt")
 
 ; Script de prueba para Conecta4
 
