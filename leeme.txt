@@ -1,0 +1,18 @@
+1. Es sumamente importante y obligatorio que los archivos TDA y los scripts
+de prueba estén en la misma carpeta para que los require/provide
+funcionen de manera correcta.
+
+2. Considerar que al momento de insertar las fichas en la función
+game-player-set-move el número de columna indicado debe ser entre 1 y
+7.
+
+3. Al momento de inicializar el game se debe indicar de manera correcta el ID
+de los jugadores (tiene que ser 1 o 2), que los jugadores no tengan el
+mismo color, que su cantidad de fichas sea menor o igual a 21, y el turno
+debe corresponder con el ID de alguno de los jugadores (1 o 2). De no
+cumplirse alguna de estas condiciones la función game considerará inválido
+el juego ingresado indicando el error con el display.
+
+4. En el primer juego se podrá inicializar con una cantidad de fichas arbitraria
+menor a 22, sin embargo, las siguientes partidas dentro de ese game serán
+inicializadas con 21 fichas para cada jugador.

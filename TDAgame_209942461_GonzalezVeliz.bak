@@ -24,7 +24,7 @@
     [(string=? (get-color player-1) (get-color player-2)) (display "Juego inválido (ambos jugadores tienen el mismo color de ficha). Inténtelo de nuevo.")]
     [(or (> (get-remaining player-1) 21) (> (get-remaining player-2) 21)) (display "Juego inválido (Uno o ambos jugadores poseen una cantidad de fichas inválida). Inténtelo de nuevo.")]
     [(= (get-id player-1) (get-id player-2)) (display "Juego inválido (ambos jugadores tienen el mismo ID). Inténtelo de nuevo.")]
-    [(not (or (= 1 current-turn) (= 2 current-turn))) (display "Juego inválido (el turno no es válido para ninguno de los jugadores). Inténtelo de nuevo.")]
+    [(not (or (= 1 current-turn) (= 2 current-turn))) (display "Juego inválido (el turno no es válido para ninguno de los jugadores) Inténtelo de nuevo")]
     [else (list player-1 player-2 board current-turn (list "Tablero vacío"))])
   )
 
