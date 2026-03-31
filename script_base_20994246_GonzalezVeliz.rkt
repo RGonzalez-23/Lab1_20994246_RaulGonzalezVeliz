@@ -6,6 +6,7 @@
 (require "TDAgame_20994246_GonzalezVeliz.rkt")
 
 ; Script de prueba para Conecta4
+;GAATITOS LINDOS
 
 ; 1. Creación de jugadores (10 fichas cada uno para un juego corto)
 (define p1 (player 1 "Juan" "red" 0 0 0 10))
